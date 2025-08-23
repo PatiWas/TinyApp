@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiny App UX-Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    select, input, button, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .suggestion {
+      background: #e0f7fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .log-entry {
+      background: #fff3e0;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      cursor: pointer;
+      background: #00acc1;
+      color: white;
+      border: none;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #007c91;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tiny App UX-Test</h1>
+
+    <!-- Situation Eingabe -->
+    <div id="situation-section">
+      <h2>Deine Situation</h2>
+      <label for="location">Ort:</label>
+      <input type="text" id="location" placeholder="z. B. Bahnhof, Zuhause...">
+
+      <label for="time">Zeit bis nächste Verpflichtung (Minuten):</label>
+      <input type="number" id="time" min="1" max="120" value="5">
+
+      <label for="mood">Stimmung:</label>
+      <select id="mood">
+        <option value="langweilig">Langweilig</option>
+        <option value="gestresst">Gestresst</option>
+        <option value="entspannt">Entspannt</option>
+      </select>
+
+      <label for="presence">In Gesellschaft:</label>
+      <select id="presence">
+        <option value="alleine">Alleine</option>
+        <option value="mit_anderen">In Gesellschaft</option>
+        <option value="in_der_naehe">In der Nähe anderer</option>
+      </select>
+
+      <button onclick="generateSuggestions()">Vorschläge erhalten</button>
+    </div>
+
+    <!-- Vorschläge -->
+    <div id="suggestions-section" class="hidden">
+      <h2>Aktivitätsvorschläge</h2>
+      <div id="suggestions-list"></div>
+    </div>
+
+    <!-- Beweis hinzufügen -->
+    <div id="proof-section" class="hidden">
+      <h2>Beweis hinzufügen</h2>
+      <label for="proof">Foto/Video/Text:</label>
+      <textarea id="proof" placeholder="Hier deinen Beweis eingeben..."></textarea>
+      <button onclick="saveProof()">Beweis speichern</button>
+    </div>
+
+    <!-- Logbuch -->
+    <div id="log-section">
+      <h2>Log-/Tagebuch</h2>
+      <div id="log-list"></div>
+    </div>
+  </div>
+
+  <script>
+    const suggestions = [
+      "Zeichnen",
+      "Etwas schreiben",
+      "Aufräumen",
+      "Kurze Meditation",
+      "Mini-Workout"
+    ];
+
+    let currentSuggestionIndex = 0;
+
+    function generateSuggestions() {
+      const section = document.getElementById("suggestions-section");
+      const list = document.getElementById("suggestions-list");
+      list.innerHTML = "";
+      currentSuggestionIndex = 0;
+
+      // 3 Vorschläge anzeigen
+      for (let i = 0; i < 3; i++) {
+        const div = document.createElement("div");
+        div.className = "suggestion";
+        div.id = `suggestion-${i}`;
+        div.innerHTML = `
+          <span>${suggestions[i]}</span>
+          <div>
+            <button onclick="swipeSuggestion(${i})">Ablehnen</button>
+            <button onclick="acceptSuggestion(${i})">Ausführen</button>
+          </div>
+        `;
+        list.appendChild(div);
+      }
+
+      section.classList.remove("hidden");
+    }
+
+    function swipeSuggestion(index) {
+      const div = document.getElementById(`suggestion-${index}`);
+      div.style.display = "none";
+    }
+
+    function acceptSuggestion(index) {
+      const div = document.getElementById(`suggestion-${index}`);
+      div.style.background = "#c8e6c9";
+      div.querySelector("button").disabled = true;
+      document.getElementById("proof-section").classList.remove("hidden");
+      document.getElementById("proof-section").dataset.currentActivity = suggestions[index];
+    }
+
+    function saveProof() {
+      const proof = document.getElementById("proof").value;
+      if (!proof) return alert("Bitte etwas eingeben.");
+
+      const logList = document.getElementById("log-list");
+      const activity = document.getElementById("proof-section").dataset.currentActivity;
+      const timestamp = new Date().toLocaleString();
+
+      const entry = document.createElement("div");
+      entry.className = "log-entry";
+      entry.innerHTML = `<strong>${activity}</strong> (${timestamp})<br>${proof}`;
+      logList.prepend(entry);
+
+      // Reset
+      document.getElementById("proof").value = "";
+      document.getElementById("proof-section").classList.add("hidden");
+      alert("Beweis gespeichert!");
+    }
+  </script>
+</body>
+</html>
