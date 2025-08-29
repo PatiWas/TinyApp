@@ -1,0 +1,32 @@
+Project: Tiny – AI-Powered Prompt Generator
+Purpose: Create a browser-based AI app that generates spontaneous, positive prompts for users to engage with. Designed to combat boredom, encourage social interaction or self-reflection, and provide a gamified, fun experience.
+Target Users: Young adults (18–35) looking for a quick, meaningful alternative to scrolling on social media.
+Core Features: 1. AI Prompt Generation - Personalized prompts based on: - Current location, time, and mood - Alone vs. around other people - Types of prompts: - Solo: self-reflection, writing, breathwork, light fitness - Social: icebreaker questions, compliments, small-talk activities
+2.	Gamification & Interaction
+o	Users swipe to accept/reject 3 suggested prompts
+o	Accepting a prompt starts a 5-minute timer
+o	Completion triggers proof submission: text, photo, or audio
+3.	Diary / Log
+o	Save completed prompts with timestamp
+o	Browse by month/year
+o	Preview shows time and summary
+4.	Contextual Customization
+o	Prompts account for social comfort zones
+o	Realistic and actionable, including optional follow-ups
+Technical Requirements: - OpenAI API – generate personalized prompts - Image/Media Handling – upload/view proof of completion - Frontend – responsive UI for web browsers - UX Features – swipe gestures, timers, diary preview
+Project Goals: - Initial Lo-Fi prototype for UX testing - Iterative improvements based on feedback - Final goal: fully functional browser-based application with polished UI/UX
+User Flow Diagram (Textual Representation):
+1.	User opens Tiny App -> Enters current situation (alone or presence of others) -> Submits form
+2.	AI generates 3 personalized prompts -> User swipes to accept/reject each
+3.	Accepted prompt triggers 5-min timer -> User completes activity
+4.	App requests proof of completion -> User submits text, photo, or audio
+5.	Proof is saved in Diary/Log -> User can view entries sorted by month/year -> Preview shows time and summary
+
+
+Frameworks to consider:
+-	HTML
+-	CSS
+-	JavaScript
+
+Format:
+-	Please consider mobile-first web application in browser.
