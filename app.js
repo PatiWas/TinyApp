@@ -1,3 +1,67 @@
+// Start the timer for the accepted prompt
+function startTimer() {
+  timeLeft = 300;
+  clearInterval(timerInterval);
+  const timer = document.getElementById('timer');
+  if (timer) {
+    timer.textContent = '05:00';
+  }
+  updateTimer();
+  timerInterval = setInterval(updateTimer, 1000);
+}
+// Handles swipe or click for prompt selection
+function swipePrompt(direction) {
+  if (direction === 'right') {
+    acceptedPrompt = currentPromptSet[currentPromptIndex];
+    // Show timer and proof form
+    document.getElementById('prompt-card').innerHTML = `
+      <div class="swipe-card">
+        <div class="prompt-text">${acceptedPrompt.text}</div>
+        <div id="timer" class="timer">05:00</div>
+        <form id="proof-form" onsubmit="submitProof(event)" style="display:flex;flex-direction:column;align-items:center;">
+          <input type="text" name="proof" placeholder="Write down your proof" required style="margin-top:16px;width:90%;padding:8px;border-radius:6px;border:1px solid #ccc;" />
+          <button type="button" id="add-photo-btn" style="margin-top:14px;margin-bottom:10px;padding:10px 18px;font-size:1rem;background:#1976d2;color:#fff;border:none;border-radius:6px;cursor:pointer;">Add photo</button>
+          <input id="photo-upload" type="file" accept="image/*" style="display:none;" />
+          <div id="photo-preview-container" style="width:100%;display:flex;justify-content:center;"></div>
+          <button type="submit" style="margin-top:16px;padding:14px 0;width:90%;font-size:1.15rem;background:#43a047;color:#fff;border:none;border-radius:8px;font-weight:600;">Add to diary</button>
+        </form>
+      </div>
+      <button class="back-btn" onclick="goBackToSituation()">&#8592; Back to Situation</button>
+    `;
+    // Add photo button logic
+    const addPhotoBtn = document.getElementById('add-photo-btn');
+    const photoInput = document.getElementById('photo-upload');
+    if (addPhotoBtn && photoInput) {
+      addPhotoBtn.addEventListener('click', function() {
+        photoInput.click();
+      });
+      photoInput.addEventListener('change', function() {
+        const previewContainer = document.getElementById('photo-preview-container');
+        if (photoInput.files && photoInput.files[0]) {
+          const file = photoInput.files[0];
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            if (previewContainer) {
+              previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width:90%;border-radius:8px;margin-top:8px;" />`;
+            }
+          };
+          reader.readAsDataURL(file);
+        } else {
+          if (previewContainer) previewContainer.innerHTML = '';
+        }
+      });
+    }
+    startTimer();
+  } else {
+    currentPromptIndex++;
+    if (currentPromptIndex < currentPromptSet.length) {
+      showPrompt(currentPromptIndex);
+    } else {
+      document.getElementById('prompt-section').style.display = 'none';
+      document.getElementById('situation-section').style.display = 'block';
+    }
+  }
+}
 function selectMood(value) {
   document.getElementById('mood').value = value;
   const btns = document.querySelectorAll('.mood-btn');
@@ -26,132 +90,152 @@ function goBackToSituation() {
 }
 const promptsAlone = {
   good: [
-    { text: 'List three things you are grateful for today.' },
-    { text: 'Write down your biggest dream.' },
-    { text: 'Try a new yoga pose.' },
-    { text: 'Write a haiku about your current mood.' },
-    { text: 'List five things you love about yourself.' },
+    { text: 'List 1 thing you are grateful for today.' },
+    { text: 'Write down 1 goal you want to reach this week.' },
+    { text: 'Write yourself a kind compliment.' },
+    { text: 'Take a quick photo of something that catches your eye.' },
+    { text: 'List 1 thing you’re looking forward to this week.' },
+    { text: 'Write about your current mood.' },
+    { text: 'List 3 things you like about yourself.' },
+    { text: 'List 3 things you are grateful for.' },
     { text: 'Write a short story in five sentences.' },
-    { text: 'Do ten jumping jacks.' },
-    { text: 'Write down three goals for this week.' },
-    { text: 'Try a breathing exercise for one minute.' },
-    { text: 'Write a list of places you want to visit.' },
-    { text: 'Write a poem about the weather.' },
-    { text: 'Do a quick tidy-up of your space.' },
+    { text: 'Call a parent and tell them about your day.' },
+    { text: 'Call a friend and tell them about your day.' },
+    { text: 'Write about a place you want to visit.' },
     { text: 'Try to balance on one leg for 30 seconds.' },
-    { text: 'Write down your favorite memory.' },
-    { text: 'Write a list of your strengths.' },
-    { text: 'Try a new stretch.' },
-    { text: 'Write a story about a magical place.' },
-    { text: 'Do a quick dance to your favorite song.' },
-    { text: 'Write a list of things that make you laugh.' },
-    { text: 'Write a letter to your past self.' }
+    { text: 'Write 1 of your strengths.' },
+    { text: 'Write about something that made you smile today.' },
+    { text: 'List 1 win from today.' },
+    { text: 'Send a cheerful message to a friend.' },
   ],
   neutral: [
-    { text: 'Take 5 deep breaths and write down how you feel.' },
-    { text: 'Stretch for one minute and notice how your body feels.' },
-    { text: 'Write a letter to your future self.' },
-    { text: 'Take a walk and count how many birds you see.' },
-    { text: 'Meditate for two minutes.' },
-    { text: 'Write a gratitude note to yourself.' },
-    { text: 'Try a new breathing technique.' },
-    { text: 'Write a list of your favorite songs.' },
-    { text: 'Write a letter to your best friend.' },
-    { text: 'Write a list of things you want to learn.' },
-    { text: 'Try a new meditation app.' },
-    { text: 'Write a poem about your favorite season.' },
-    { text: 'Do 20 squats.' },
-    { text: 'Write a list of your favorite foods.' },
-    { text: 'Write a letter to your parents.' },
-    { text: 'Write a list of your favorite places.' },
-    { text: 'Try a new yoga stretch.' }
+  { text: 'Send a quick message to a parent asking how they are.' },
+  { text: 'Send a short check-in to a friend.' },
+  { text: 'Write 2 sentences about how you feel right now.' },
+  { text: 'List 1 small thing you appreciate today.' },
+  { text: 'Write down 2 personal strengths you’re proud of.' },
+  { text: 'Invent a tiny story in 3 sentences.' },
+  { text: 'Stretch your arms, touch your toes, then describe how your body feels.' },
+  { text: 'Write a short note to your future self.' },
+  { text: 'Write down 1 recent memory that makes you smile.' },
+  { text: 'Take 5 deep breaths and describe how you feel.' },
+  { text: 'Write 1 gratitude line to yourself.' },
+  { text: 'List three of your current favorite songs off the top of your head.' },
+  { text: 'Write a short message you’d like to send to a friend.' },
+  { text: 'List 3 things you’d like to learn.' },
+  { text: 'List 3 of your recent favorite foods.' },
+  { text: 'Write one kind thought you’d share with your parents.' },
+  { text: 'List 3 of your favorite places.' },
+  { text: 'Notice and describe 2 things around you right now.' },
+  { text: 'Set 1 small goal for the rest of today.' },
+  { text: 'Stretch gently and take three deep breaths.' },
+  { text: 'Write down 1 thing you feel curious about.' },
+  { text: 'Write a kind thought for someone you care about.' }
   ],
   bad: [
-    { text: 'Write about something that is bothering you.' },
-    { text: 'Write a letter to yourself offering support.' },
-    { text: 'List three things you can do to feel better.' },
-    { text: 'Write down a recent challenge and how you handled it.' },
-    { text: 'Write a list of people who support you.' },
-    { text: 'Write about a time you overcame something difficult.' },
-    { text: 'Write a letter to someone you appreciate.' },
-    { text: 'Write a list of things that help you relax.' },
-    { text: 'Write about a comforting memory.' },
-    { text: 'Write a list of things you can do for self-care.' },
-    { text: 'Write a letter to your future self about hope.' },
-    { text: 'Write a list of things you want to let go of.' },
-    { text: 'Write about a time you felt proud of yourself.' },
-    { text: 'Write a list of things you are grateful for, even if small.' },
-    { text: 'Write a letter to someone who helped you.' }
+  { text: 'Write down what is bothering you right now.' },
+  { text: 'Focus on something in the distance for 30 seconds and describe it.' },
+  { text: 'Write about what you would like to be doing right now.' },
+  { text: 'List 2 small things you could do to feel better.' },
+  { text: 'Write down a recent challenge and how you handled it.' },
+  { text: 'Write about someone who loves you unconditionally.' },
+  { text: 'Recall a time you overcame something difficult.' },
+  { text: 'Write a short note to someone you appreciate.' },
+  { text: 'List a few things that help you relax.' },
+  { text: 'Write about a comforting memory.' },
+  { text: 'Make a short list of self-care ideas.' },
+  { text: 'Write a hopeful note to your future self.' },
+  { text: 'List a few things you want to let go of.' },
+  { text: 'Write about a time you felt proud of yourself.' },
+  { text: 'List 1 small thing you’re grateful for.' },
+  { text: 'Take 5 deep breaths and describe how you feel.' },
+  { text: 'Name 2 things that are still okay today.' },
+  { text: 'Write 1 kind sentence to yourself.' },
+  { text: 'Note 1 thing you’re looking forward to.' },
+  { text: 'Think of 1 small way to treat yourself.' },
+  { text: 'Send a short message to a friend.' },
+  { text: 'Send a short message to a parent.' },
+  { text: 'Play a favorite song and enjoy it quietly.' },
+  { text: 'Sit upright, roll your shoulders, and take 3 slow breaths.' }
   ]
 };
 
 const promptsSocial = {
   good: [
-    { text: 'Compliment someone nearby.' },
-    { text: 'Ask someone about their favorite movie.' },
-    { text: 'Share a fun fact with someone.' },
-    { text: 'Give a genuine compliment to a friend.' },
-    { text: 'Ask someone what made them smile today.' },
-    { text: 'Invite someone to play a quick game.' },
-    { text: 'Ask someone to share a childhood memory.' },
-    { text: 'Share your favorite song with someone.' },
-    { text: 'Ask someone about their favorite food.' },
-    { text: 'Ask someone to teach you a word in another language.' },
-    { text: 'Ask someone what inspires them.' },
-    { text: 'Share a joke with someone.' },
-    { text: 'Ask someone about their dream job.' },
-    { text: 'Ask someone to share a piece of advice.' },
-    { text: 'Ask someone about their favorite hobby.' },
-    { text: 'Share a positive news story with someone.' }
+  { text: 'Share 1 funny story with someone nearby.' },
+  { text: 'Give a small, genuine compliment.' },
+  { text: 'Ask someone: What made you smile today?' },
+  { text: 'Start a light chat: weather, music, food.' },
+  { text: 'Ask someone about their favorite movie.' },
+  { text: 'Share a fun fact with someone.' },
+  { text: 'Ask someone to share a childhood memory.' },
+  { text: 'Share your favorite song with someone.' },
+  { text: 'Ask someone about their favorite food.' },
+  { text: 'Ask someone to teach you a word in another language.' },
+  { text: 'Ask someone what inspires them.' },
+  { text: 'Share a joke with someone.' },
+  { text: 'Ask someone about their job.' },
+  { text: 'Ask someone to share a piece of advice.' },
+  { text: 'Ask someone about their favorite hobby.' },
+  { text: 'Share a positive news story with someone.' }
   ],
   neutral: [
-    { text: 'Ask someone about their favorite sport.' },
-    { text: 'Ask someone to share a travel story.' },
-    { text: 'Ask someone about their favorite book.' },
-    { text: 'Ask someone to share a recipe.' },
-    { text: 'Ask someone about their favorite holiday.' },
-    { text: 'Ask someone to share a funny story.' },
-    { text: 'Ask someone about their favorite animal.' },
-    { text: 'Ask someone to share a life lesson.' },
-    { text: 'Ask someone about their favorite color.' },
-    { text: 'Ask someone to share a childhood dream.' },
-    { text: 'Ask someone about their favorite teacher.' },
-    { text: 'Ask someone to share a favorite memory.' },
-    { text: 'Ask someone about their favorite city.' },
-    { text: 'Ask someone to share a favorite quote.' },
-    { text: 'Ask someone about their favorite dessert.' },
-    { text: 'Ask someone to share a favorite song lyric.' },
-    { text: 'Ask someone about their favorite outdoor activity.' },
-    { text: 'Ask someone to share a favorite movie scene.' },
-    { text: 'Ask someone about their favorite childhood game.' },
-    { text: 'Ask someone to share a favorite family tradition.' },
-    { text: 'Ask someone about their favorite way to relax.' },
-    { text: 'Ask someone to share a favorite joke.' },
-    { text: 'Ask someone about their favorite ice cream flavor.' },
-    { text: 'Ask someone to share a favorite travel destination.' },
-    { text: 'Ask someone about their favorite thing to cook.' },
-    { text: 'Ask someone to share a favorite childhood book.' },
-    { text: 'Ask someone about their favorite way to spend a weekend.' },
-    { text: 'Ask someone to share a favorite holiday tradition.' },
-    { text: 'Ask someone about their favorite board game.' },
-    { text: 'Ask someone to share a favorite childhood snack.' },
-    { text: 'Ask someone about their favorite way to celebrate.' }
+  { text: 'Say hello and smile at someone.' },
+  { text: 'Ask a simple question (time, train, etc.).' },
+  { text: 'Notice one detail about a person’s style.' },
+  { text: 'Share something small you appreciate today.' },
+  { text: 'Make eye contact and nod kindly.' },
+  { text: 'Ask someone about their favorite sport.' },
+  { text: 'Look around and count how many birds and people you see.' },
+  { text: 'Ask someone to share a travel story.' },
+  { text: 'Ask someone about their favorite book.' },
+  { text: 'Ask someone to share a recipe.' },
+  { text: 'Ask someone about their favorite holiday.' },
+  { text: 'Ask someone to share a funny story.' },
+  { text: 'Ask someone about their favorite animal.' },
+  { text: 'Ask someone to share a life lesson.' },
+  { text: 'Ask someone about their favorite color.' },
+  { text: 'Ask someone to share a childhood dream.' },
+  { text: 'Ask someone about their favorite teacher.' },
+  { text: 'Ask someone to share a favorite memory.' },
+  { text: 'Ask someone about their favorite city.' },
+  { text: 'Ask someone to share a favorite quote.' },
+  { text: 'Ask someone about their favorite dessert.' },
+  { text: 'Ask someone to share a favorite song lyric.' },
+  { text: 'Ask someone about their favorite outdoor activity.' },
+  { text: 'Ask someone to share a favorite movie scene.' },
+  { text: 'Ask someone about their favorite childhood game.' },
+  { text: 'Ask someone to share a favorite family tradition.' },
+  { text: 'Ask someone about their favorite way to relax.' },
+  { text: 'Ask someone to share a favorite joke.' },
+  { text: 'Ask someone about their favorite ice cream flavor.' },
+  { text: 'Ask someone to share a favorite travel destination.' },
+  { text: 'Ask someone about their favorite thing to cook.' },
+  { text: 'Ask someone to share a favorite childhood book.' },
+  { text: 'Ask someone about their favorite way to spend a weekend.' },
+  { text: 'Ask someone to share a favorite holiday tradition.' },
+  { text: 'Ask someone about their favorite board game.' },
+  { text: 'Ask someone to share a favorite childhood snack.' },
+  { text: 'Ask someone about their favorite way to celebrate.' }
   ],
   bad: [
-    { text: 'Ask someone to share a challenge they overcame.' },
-    { text: 'Ask someone about a time they felt proud.' },
-    { text: 'Ask someone to share a comforting memory.' },
-    { text: 'Ask someone about a time they helped someone.' },
-    { text: 'Ask someone to share a piece of advice for tough times.' },
-    { text: 'Ask someone about a time they felt supported.' },
-    { text: 'Ask someone to share a story about kindness.' },
-    { text: 'Ask someone about a time they learned something important.' },
-    { text: 'Ask someone to share a hope for the future.' },
-    { text: 'Ask someone about a time they felt grateful.' },
-    { text: 'Ask someone to share a way they practice self-care.' },
-    { text: 'Ask someone about a time they made a difference.' },
-    { text: 'Ask someone to share a lesson from a difficult experience.' },
-    { text: 'Ask someone about a time they felt happy after a challenge.' }
+  { text: 'Offer a small act of kindness (hold a door).' },
+  { text: 'Ask someone an easy, neutral question.' },
+  { text: 'Smile gently — no words needed.' },
+  { text: 'Ask someone to share a challenge they overcame.' },
+  { text: 'Ask someone about a time they felt proud.' },
+  { text: 'Ask someone to share a comforting memory.' },
+  { text: 'Ask someone about a time they helped someone.' },
+  { text: 'Ask someone to share a piece of advice for tough times.' },
+  { text: 'Ask someone about a time they felt supported.' },
+  { text: 'Ask someone to share a story about kindness.' },
+  { text: 'Ask someone about a time they learned something important.' },
+  { text: 'Ask someone to share a hope for the future.' },
+  { text: 'Ask someone about a time they felt grateful.' },
+  { text: 'Ask someone to share a way they practice self-care.' },
+  { text: 'Ask someone about a time they made a difference.' },
+  { text: 'Ask someone to share a lesson from a difficult experience.' },
+  { text: 'Ask someone about a time they felt happy after a challenge.' }
   ]
 };
 // Tiny App - Main JS
@@ -193,8 +277,8 @@ function showPrompt(idx) {
       <div class="swipe-card">
         <div class="prompt-text">${currentPromptSet[idx].text}</div>
         <div class="swipe-arrows">
-          <span class="swipe-arrow swipe-arrow-left">&#8592; No</span>
-          <span class="swipe-arrow swipe-arrow-right">Yes &#8594;</span>
+          <span class="swipe-arrow swipe-arrow-left" style="cursor:pointer;" onclick="swipePrompt('left')">&#8592; No</span>
+          <span class="swipe-arrow swipe-arrow-right" style="cursor:pointer;" onclick="swipePrompt('right')">Yes &#8594;</span>
         </div>
       </div>
       <button class="back-btn" onclick="goBackToSituation()">&#8592; Back to Situation</button>
@@ -225,62 +309,62 @@ function swipe(direction) {
 
 
 function addSwipeGesture(card) {
-  let startX = null;
-  // Touch events
-  card.ontouchstart = function(e) {
-    startX = e.touches[0].clientX;
-  };
-  card.ontouchend = function(e) {
-    if (startX === null) return;
-    let endX = e.changedTouches[0].clientX;
-    let diff = endX - startX;
-    if (diff > 30) swipe('right');
-    else if (diff < -30) swipe('left');
-    startX = null;
-  };
+  let startX = 0;
+  let startY = 0;
+  let isDragging = false;
+  let threshold = 30;
 
-  // Mouse events
-  card.onmousedown = function(e) {
-    startX = e.clientX;
-    card.style.transition = '';
-  };
-  card.onmouseup = function(e) {
-    if (startX === null) return;
-    let endX = e.clientX;
-    let diff = endX - startX;
-    if (diff > 30) swipe('right');
-    else if (diff < -30) swipe('left');
-    startX = null;
+  // Touch events (mobile)
+  card.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isDragging = true;
+    }
+  });
+  card.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    let dx = e.touches[0].clientX - startX;
+    let dy = e.touches[0].clientY - startY;
+    card.style.transform = `translate(${dx}px, ${dy}px)`;
+  });
+  card.addEventListener('touchend', function(e) {
+    if (!isDragging) return;
+    let dx = e.changedTouches[0].clientX - startX;
+    let dy = e.changedTouches[0].clientY - startY;
     card.style.transform = '';
-  };
-  card.onmousemove = function(e) {
-    if (startX !== null) {
-      let diff = e.clientX - startX;
-      card.style.transform = `translateX(${diff}px)`;
+    isDragging = false;
+    if (dx > threshold) {
+      swipePrompt('right');
+    } else if (dx < -threshold) {
+      swipePrompt('left');
     }
-  };
-  card.onmouseleave = function(e) {
-    if (startX !== null) {
-      card.style.transform = '';
-      startX = null;
-    }
-  };
-}
+  });
 
-function startTimer() {
-  const card = document.getElementById('prompt-card');
-  card.innerHTML = `
-    <div class="selected-prompt">${acceptedPrompt.text}</div>
-    <div class="timer" id="timer">05:00</div>
-    <div>Complete the activity, then submit proof below.</div>
-    <form class="proof-form" onsubmit="submitProof(event)">
-      <textarea name="proof" placeholder="Describe what you did..." required></textarea>
-      <input type="file" accept="image/*,audio/*" />
-      <button type="submit">Submit Proof</button>
-    </form>
-    <button class="back-btn" onclick="goBackToSituation()">&#8592; Back to Situation</button>
-  `;
-  timeLeft = 300;
+  // Mouse events (desktop)
+  card.addEventListener('mousedown', function(e) {
+    startX = e.clientX;
+    startY = e.clientY;
+    isDragging = true;
+  });
+  card.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    let dx = e.clientX - startX;
+    let dy = e.clientY - startY;
+    card.style.transform = `translate(${dx}px, ${dy}px)`;
+  });
+  card.addEventListener('mouseup', function(e) {
+    if (!isDragging) return;
+    let dx = e.clientX - startX;
+    let dy = e.clientY - startY;
+    card.style.transform = '';
+    isDragging = false;
+    if (dx > threshold) {
+      swipePrompt('right');
+    } else if (dx < -threshold) {
+      swipePrompt('left');
+    }
+  });
   updateTimer();
   timerInterval = setInterval(updateTimer, 1000);
 }
