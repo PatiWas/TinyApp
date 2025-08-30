@@ -1,3 +1,26 @@
+.swipe-arrows {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  gap: 1.2rem;
+}
+.swipe-arrow {
+  padding: 1rem 2.2rem;
+  border-radius: 1rem;
+  background: #fff3e0;
+  color: #fd267d;
+  border: 2px solid #fd267d;
+  box-shadow: 0 2px 8px rgba(253,38,125,0.10);
+  font-size: 1.15rem;
+  min-width: 90px;
+  min-height: 48px;
+  text-align: center;
+  user-select: none;
+  touch-action: manipulation;
+}
 .start-btn {
   display: block;
   margin: 32px auto 0 auto;

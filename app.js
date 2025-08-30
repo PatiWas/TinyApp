@@ -286,33 +286,39 @@ function showPrompt(idx) {
     // Add click/tap feedback for No/Yes buttons
     const noBtn = document.getElementById('no-btn');
     const yesBtn = document.getElementById('yes-btn');
-    if (noBtn) {
-      noBtn.addEventListener('click', function() {
-        noBtn.classList.add('active');
-        setTimeout(() => noBtn.classList.remove('active'), 180);
-        swipePrompt('left');
+    // Use pointer events for best mobile/desktop compatibility
+    function addButtonFeedback(btn, direction) {
+      if (!btn) return;
+      let pointerActive = false;
+      btn.addEventListener('pointerdown', function(e) {
+        btn.classList.add('active');
+        pointerActive = true;
+        // Prevent drag/swipe when pressing button
+        window.isButtonPress = true;
+        e.stopPropagation();
       });
-      noBtn.addEventListener('touchstart', function() {
-        noBtn.classList.add('active');
+      btn.addEventListener('pointerup', function(e) {
+        btn.classList.remove('active');
+        if (pointerActive) {
+          swipePrompt(direction);
+          pointerActive = false;
+        }
+        window.isButtonPress = false;
+        e.stopPropagation();
       });
-      noBtn.addEventListener('touchend', function() {
-        noBtn.classList.remove('active');
+      btn.addEventListener('pointerleave', function() {
+        btn.classList.remove('active');
+        pointerActive = false;
+        window.isButtonPress = false;
+      });
+      btn.addEventListener('pointercancel', function() {
+        btn.classList.remove('active');
+        pointerActive = false;
+        window.isButtonPress = false;
       });
     }
-    if (yesBtn) {
-      yesBtn.addEventListener('click', function() {
-        yesBtn.classList.add('active');
-        setTimeout(() => yesBtn.classList.remove('active'), 180);
-        swipePrompt('right');
-      });
-      yesBtn.addEventListener('touchstart', function() {
-        yesBtn.classList.add('active');
-      });
-      yesBtn.addEventListener('touchend', function() {
-        yesBtn.classList.remove('active');
-      });
-    }
-    addSwipeGesture(card);
+  addButtonFeedback(noBtn, 'left');
+  addButtonFeedback(yesBtn, 'right');
   } else {
     // If user did not pick any prompt, send back to situation section
     document.getElementById('prompt-section').style.display = 'none';
@@ -337,66 +343,6 @@ function swipe(direction) {
 }
 
 
-function addSwipeGesture(card) {
-  let startX = 0;
-  let startY = 0;
-  let isDragging = false;
-  let threshold = 30;
-
-  // Touch events (mobile)
-  card.addEventListener('touchstart', function(e) {
-    if (e.touches.length === 1) {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      isDragging = true;
-    }
-  });
-  card.addEventListener('touchmove', function(e) {
-    if (!isDragging) return;
-    let dx = e.touches[0].clientX - startX;
-    let dy = e.touches[0].clientY - startY;
-    card.style.transform = `translate(${dx}px, ${dy}px)`;
-  });
-  card.addEventListener('touchend', function(e) {
-    if (!isDragging) return;
-    let dx = e.changedTouches[0].clientX - startX;
-    let dy = e.changedTouches[0].clientY - startY;
-    card.style.transform = '';
-    isDragging = false;
-    if (dx > threshold) {
-      swipePrompt('right');
-    } else if (dx < -threshold) {
-      swipePrompt('left');
-    }
-  });
-
-  // Mouse events (desktop)
-  card.addEventListener('mousedown', function(e) {
-    startX = e.clientX;
-    startY = e.clientY;
-    isDragging = true;
-  });
-  card.addEventListener('mousemove', function(e) {
-    if (!isDragging) return;
-    let dx = e.clientX - startX;
-    let dy = e.clientY - startY;
-    card.style.transform = `translate(${dx}px, ${dy}px)`;
-  });
-  card.addEventListener('mouseup', function(e) {
-    if (!isDragging) return;
-    let dx = e.clientX - startX;
-    let dy = e.clientY - startY;
-    card.style.transform = '';
-    isDragging = false;
-    if (dx > threshold) {
-      swipePrompt('right');
-    } else if (dx < -threshold) {
-      swipePrompt('left');
-    }
-  });
-  updateTimer();
-  timerInterval = setInterval(updateTimer, 1000);
-}
 
 function updateTimer() {
   timeLeft--;
@@ -476,9 +422,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('situation-form');
   form.addEventListener('submit', function(e) {
     e.preventDefault();
+    const situation = document.getElementById('situation').value;
+    const mood = document.getElementById('mood').value;
+    if (!situation || !mood) {
+      alert('Please choose both a situation and a mood to continue.');
+      return;
+    }
     document.getElementById('situation-section').style.display = 'none';
     document.getElementById('prompt-section').style.display = 'block';
-  showPromptSet();
+    showPromptSet();
   });
 });
       timer.textContent = `${min}:${sec}`;
