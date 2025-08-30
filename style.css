@@ -1,3 +1,6 @@
+input, button, textarea {
+  font-size: 16px !important;
+}
 .swipe-arrows {
   display: flex;
   justify-content: space-between;
@@ -202,7 +205,7 @@ body {
   border-radius: 1.5rem;
   box-shadow: 0 4px 24px rgba(253,38,125,0.12);
   margin: 2rem auto;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.2rem;
   max-width: 400px;
 }
 
@@ -211,7 +214,7 @@ body {
   border-radius: 2rem;
   box-shadow: 0 8px 32px rgba(253,38,125,0.18);
   margin: 2rem auto;
-  padding: 3rem 2rem;
+  padding: 3rem 1.2rem;
   max-width: 420px;
   min-height: 220px;
   display: flex;
@@ -313,7 +316,7 @@ body {
   background: #fff3e0;
   border-radius: 1rem;
   margin-bottom: 1rem;
-  padding: 1rem;
+  padding: 1.2rem;
   box-shadow: 0 2px 8px rgba(253,38,125,0.10);
 }
 .log-time {
