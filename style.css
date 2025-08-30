@@ -1,3 +1,27 @@
+.start-btn {
+  display: block;
+  margin: 32px auto 0 auto;
+  padding: 18px 0;
+  width: 80%;
+  font-size: 1.35rem;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.start-btn:active {
+  background: #1565c0;
+}
+.swipe-arrow.active {
+  background: #e0e0e0;
+  color: #1976d2;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
 /* Celebration animation styles */
 .celebration {
   display: flex;

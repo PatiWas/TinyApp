@@ -277,12 +277,41 @@ function showPrompt(idx) {
       <div class="swipe-card">
         <div class="prompt-text">${currentPromptSet[idx].text}</div>
         <div class="swipe-arrows">
-          <span class="swipe-arrow swipe-arrow-left" style="cursor:pointer;" onclick="swipePrompt('left')">&#8592; No</span>
-          <span class="swipe-arrow swipe-arrow-right" style="cursor:pointer;" onclick="swipePrompt('right')">Yes &#8594;</span>
+          <span class="swipe-arrow swipe-arrow-left" style="cursor:pointer;" id="no-btn">&#8592; No</span>
+          <span class="swipe-arrow swipe-arrow-right" style="cursor:pointer;" id="yes-btn">Yes &#8594;</span>
         </div>
       </div>
       <button class="back-btn" onclick="goBackToSituation()">&#8592; Back to Situation</button>
     `;
+    // Add click/tap feedback for No/Yes buttons
+    const noBtn = document.getElementById('no-btn');
+    const yesBtn = document.getElementById('yes-btn');
+    if (noBtn) {
+      noBtn.addEventListener('click', function() {
+        noBtn.classList.add('active');
+        setTimeout(() => noBtn.classList.remove('active'), 180);
+        swipePrompt('left');
+      });
+      noBtn.addEventListener('touchstart', function() {
+        noBtn.classList.add('active');
+      });
+      noBtn.addEventListener('touchend', function() {
+        noBtn.classList.remove('active');
+      });
+    }
+    if (yesBtn) {
+      yesBtn.addEventListener('click', function() {
+        yesBtn.classList.add('active');
+        setTimeout(() => yesBtn.classList.remove('active'), 180);
+        swipePrompt('right');
+      });
+      yesBtn.addEventListener('touchstart', function() {
+        yesBtn.classList.add('active');
+      });
+      yesBtn.addEventListener('touchend', function() {
+        yesBtn.classList.remove('active');
+      });
+    }
     addSwipeGesture(card);
   } else {
     // If user did not pick any prompt, send back to situation section
