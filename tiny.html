@@ -12,13 +12,28 @@
   <main>
     <section id="situation-section" class="container">
       <form id="situation-form">
-        <label for="situation">Are you alone or with others?</label>
-        <select id="situation" name="situation">
-          <option value="alone">Alone</option>
-          <option value="social">With others</option>
-        </select>
+        <div class="situation-btn-group">
+          <button type="button" class="situation-btn" data-value="alone" onclick="selectSituation('alone')">
+            <span style="font-size:2rem;">&#128100;</span><br>Alone
+          </button>
+          <button type="button" class="situation-btn" data-value="social" onclick="selectSituation('social')">
+            <span style="font-size:2rem;">&#128101;</span><br>With Others
+          </button>
+        </div>
+        <input type="hidden" id="situation" name="situation" value="alone">
         <label for="mood">How do you feel?</label>
-        <input type="text" id="mood" name="mood" placeholder="e.g. happy, bored, curious">
+        <div class="mood-btn-group">
+          <button type="button" class="mood-btn" data-value="good" onclick="selectMood('good')">
+            <span style="font-size:2rem;">&#128522;</span><br>Good
+          </button>
+          <button type="button" class="mood-btn" data-value="neutral" onclick="selectMood('neutral')">
+            <span style="font-size:2rem;">&#128528;</span><br>Neutral
+          </button>
+          <button type="button" class="mood-btn" data-value="bad" onclick="selectMood('bad')">
+            <span style="font-size:2rem;">&#128577;</span><br>Bad
+          </button>
+        </div>
+        <input type="hidden" id="mood" name="mood" value="neutral">
         <button type="submit">Start</button>
       </form>
     </section>
